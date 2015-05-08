@@ -1,0 +1,13 @@
+{
+  "name": "sliding-text-layer",
+  "version": "1.0",
+  "includes": [ "lib/" ],
+  "sources": [ "lib/sliding-text-layer.c" ],
+  "js": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smallstoneapps/sliding-text-layer.git"
+  },
+  "author": "Matthew Tole <pebble@matthewtole.com>",
+  "license": "MIT"
+}
