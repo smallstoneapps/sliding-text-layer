@@ -1,3 +1,38 @@
+/*
+
+SlidingTextLayer v1.0
+
+----------------------
+
+The MIT License (MIT)
+
+Copyright © 2015 Matthew Tole
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+--------------------
+
+demo/demo.c
+
+*/
+
+
 #include <pebble.h>
 #include "../../lib/sliding-text-layer.h"
 
@@ -27,6 +62,7 @@ static char* s_texts[] = {
 };
 static uint8_t s_text_count = 10;
 static uint8_t s_text_position = 0;
+
 
 int main(void) {
   init();
@@ -58,6 +94,7 @@ static void window_load(Window* window) {
   sliding_text_layer_set_font(s_sliding_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   sliding_text_layer_set_text_color(s_sliding_text_layer, GColorWhite);
   sliding_text_layer_set_text(s_sliding_text_layer, s_texts[0]);
+  sliding_text_layer_set_vertical_adjustment(s_sliding_text_layer, -6);
   sliding_text_layer_add_to_window(s_sliding_text_layer, s_window);
 }
 
@@ -76,7 +113,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
   }
   s_text_position -= 1;
   sliding_text_layer_set_next_text(s_sliding_text_layer, s_texts[s_text_position]);
-  sliding_text_layer_animate_up(s_sliding_text_layer, 500);
+  sliding_text_layer_animate_up(s_sliding_text_layer);
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void* context) {
@@ -85,5 +122,5 @@ static void down_click_handler(ClickRecognizerRef recognizer, void* context) {
   }
   s_text_position += 1;
   sliding_text_layer_set_next_text(s_sliding_text_layer, s_texts[s_text_position]);
-  sliding_text_layer_animate_down(s_sliding_text_layer, 500);
+  sliding_text_layer_animate_down(s_sliding_text_layer);
 }
