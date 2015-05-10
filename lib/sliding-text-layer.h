@@ -1,6 +1,6 @@
 /*
 
-SlidingTextLayer v1.0
+SlidingTextLayer v1.1
 
 ----------------------
 
