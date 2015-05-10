@@ -95,6 +95,7 @@ static void window_load(Window* window) {
   sliding_text_layer_set_text_color(s_sliding_text_layer, GColorWhite);
   sliding_text_layer_set_text(s_sliding_text_layer, s_texts[0]);
   sliding_text_layer_set_vertical_adjustment(s_sliding_text_layer, -6);
+  sliding_text_layer_set_duration(s_sliding_text_layer, 500);
   sliding_text_layer_add_to_window(s_sliding_text_layer, s_window);
 }
 
@@ -108,18 +109,30 @@ static void click_config_provider(void* context) {
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
-  if (s_text_position <= 0) {
+  if (sliding_text_layer_is_animating(s_sliding_text_layer)) {
     return;
   }
+
+  if (s_text_position <= 0) {
+    sliding_text_layer_animate_bounce_up(s_sliding_text_layer);
+    return;
+  }
+
   s_text_position -= 1;
   sliding_text_layer_set_next_text(s_sliding_text_layer, s_texts[s_text_position]);
   sliding_text_layer_animate_up(s_sliding_text_layer);
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void* context) {
-  if (s_text_position >= s_text_count - 1) {
+  if (sliding_text_layer_is_animating(s_sliding_text_layer)) {
     return;
   }
+
+  if (s_text_position >= s_text_count - 1) {
+    sliding_text_layer_animate_bounce_down(s_sliding_text_layer);
+    return;
+  }
+
   s_text_position += 1;
   sliding_text_layer_set_next_text(s_sliding_text_layer, s_texts[s_text_position]);
   sliding_text_layer_animate_down(s_sliding_text_layer);

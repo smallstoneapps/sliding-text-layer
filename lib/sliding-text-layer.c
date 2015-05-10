@@ -51,6 +51,7 @@ typedef struct SlidingTextLayerData {
   GTextAlignment align;
   Animation* animation;
   AnimationImplementation implementation;
+  AnimationImplementation implementation_bounce;
   uint16_t offset;
   uint8_t direction;
   AnimationCurve curve;
@@ -60,10 +61,13 @@ typedef struct SlidingTextLayerData {
 
 
 static void animate(SlidingTextLayer* layer, uint8_t direction);
+static void animate_bounce(SlidingTextLayer* layer, uint8_t direction);
 static void render(Layer* layer, GContext* ctx);
 static void animation_started(Animation *anim, void *context);
 static void animation_stopped(Animation *anim, bool stopped, void *context);
+static void animation_stopped_bounce(Animation *anim, bool stopped, void *context);
 static void update(Animation* anim, AnimationProgress dist_normalized);
+static void update_bounce(Animation* anim, AnimationProgress dist_normalized);
 #define get_layer(layer) (Layer*)layer
 #define get_data(layer) (SlidingTextLayerData*) layer_get_data(get_layer(layer))
 #define layer_get_height(layer) layer_get_bounds(layer).size.h
@@ -79,6 +83,7 @@ SlidingTextLayer* sliding_text_layer_create(GRect rect) {
   data->offset = 0;
   data->is_animating = false;
   data->implementation.update = update;
+  data->implementation_bounce.update = update_bounce;
   data->curve = AnimationCurveEaseInOut;
   data->duration = 1000;
   layer_set_update_proc(get_layer(layer), render);
@@ -99,6 +104,14 @@ void sliding_text_layer_animate_up(SlidingTextLayer* layer) {
 
 void sliding_text_layer_animate_down(SlidingTextLayer* layer) {
   animate(layer, ANIMATION_DIRECTION_DOWN);
+}
+
+void sliding_text_layer_animate_bounce_up(SlidingTextLayer* layer) {
+  animate_bounce(layer, ANIMATION_DIRECTION_UP);
+}
+
+void sliding_text_layer_animate_bounce_down(SlidingTextLayer* layer) {
+  animate_bounce(layer, ANIMATION_DIRECTION_DOWN);
 }
 
 void sliding_text_layer_set_text(SlidingTextLayer* layer, char* text) {
@@ -192,6 +205,17 @@ void sliding_text_layer_set_vertical_adjustment(SlidingTextLayer* layer, int8_t 
   data->adjustment = adjustment;
 }
 
+bool sliding_text_layer_is_animating(SlidingTextLayer* layer) {
+  if (! layer) {
+    return false;
+  }
+  SlidingTextLayerData* data = get_data(layer);
+  if (! data) {
+    return false;
+  }
+  return data->is_animating;
+}
+
 
 static void animate(SlidingTextLayer* layer, uint8_t direction) {
   if (! layer) {
@@ -214,6 +238,31 @@ static void animate(SlidingTextLayer* layer, uint8_t direction) {
   animation_set_handlers(data->animation, (AnimationHandlers) {
     .started = animation_started,
     .stopped = animation_stopped
+  }, (void*)layer);
+  animation_schedule(data->animation);
+}
+
+static void animate_bounce(SlidingTextLayer* layer, uint8_t direction) {
+  if (! layer) {
+    return;
+  }
+  SlidingTextLayerData* data = get_data(layer);
+  if (! data) {
+    return;
+  }
+  if (data->is_animating) {
+    return;
+  }
+
+  data->direction = direction;
+  data->offset = 0;
+  data->animation = animation_create();
+  animation_set_duration(data->animation, data->duration / 2);
+  animation_set_curve(data->animation, data->curve);
+  animation_set_implementation(data->animation, &data->implementation_bounce);
+  animation_set_handlers(data->animation, (AnimationHandlers) {
+    .started = animation_started,
+    .stopped = animation_stopped_bounce
   }, (void*)layer);
   animation_schedule(data->animation);
 }
@@ -266,11 +315,37 @@ static void animation_stopped(Animation *anim, bool stopped, void *context) {
   data->text_next = false;
 }
 
+static void animation_stopped_bounce(Animation *anim, bool stopped, void *context) {
+  SlidingTextLayerData* data = get_data((SlidingTextLayer*)context);
+  data->is_animating = false;
+}
+
 static void update(Animation* anim, AnimationProgress dist_normalized) {
   SlidingTextLayer* layer = (SlidingTextLayer*)animation_get_context(anim);
   SlidingTextLayerData* data = get_data(layer);
 
   float percent = (float)dist_normalized / (float)ANIMATION_NORMALIZED_MAX;
-  data->offset = data->direction == ANIMATION_DIRECTION_UP ? (layer_get_height(layer) - (uint16_t)((float)layer_get_height(layer) * percent)) : (uint16_t)((float)layer_get_height(layer) * percent);
+  if (data->direction == ANIMATION_DIRECTION_UP) {
+    data->offset = layer_get_height(layer) - (uint16_t)((float)layer_get_height(layer) * percent);
+  }
+  else {
+    data->offset = (uint16_t)((float)layer_get_height(layer) * percent);
+  }
+  layer_mark_dirty(get_layer(layer));
+}
+
+static void update_bounce(Animation* anim, AnimationProgress dist_normalized) {
+  SlidingTextLayer* layer = (SlidingTextLayer*)animation_get_context(anim);
+  SlidingTextLayerData* data = get_data(layer);
+
+  float max_height = layer_get_height(layer) / 3;
+
+  float percent = (float)dist_normalized / (float)ANIMATION_NORMALIZED_MAX;
+  if (data->direction == ANIMATION_DIRECTION_UP) {
+    data->offset = layer_get_height(layer) - (uint16_t)(max_height * percent);
+  }
+  else {
+    data->offset = (uint16_t)(max_height * percent);
+  }
   layer_mark_dirty(get_layer(layer));
 }
