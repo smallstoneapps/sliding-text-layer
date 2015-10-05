@@ -90,7 +90,9 @@ static void deinit(void) {
 }
 
 static void window_load(Window* window) {
-  s_sliding_text_layer = sliding_text_layer_create(GRect(0, 72, 144, 24));
+  GSize window_size = layer_get_bounds(window_get_root_layer(window)).size;
+
+  s_sliding_text_layer = sliding_text_layer_create(GRect(0, window_size.h / 2 - 12, window_size.w, 24));
   sliding_text_layer_set_font(s_sliding_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   sliding_text_layer_set_text_color(s_sliding_text_layer, GColorWhite);
   sliding_text_layer_set_text(s_sliding_text_layer, s_texts[0]);
