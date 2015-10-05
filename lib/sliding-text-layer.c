@@ -45,7 +45,7 @@ typedef struct SlidingTextLayerData {
   char* text_next;
   char* text_current;
   GColor color_text;
-  GFont* font;
+  GFont font;
   bool is_animating;
   GTextOverflowMode overflow;
   GTextAlignment align;
@@ -159,7 +159,7 @@ void sliding_text_layer_set_animation_curve(SlidingTextLayer* layer, AnimationCu
   data->curve = curve;
 }
 
-void sliding_text_layer_set_font(SlidingTextLayer* layer, GFont* font) {
+void sliding_text_layer_set_font(SlidingTextLayer* layer, GFont font) {
   if (! layer) {
     return;
   }

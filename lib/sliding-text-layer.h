@@ -115,7 +115,7 @@ void sliding_text_layer_set_animation_curve(SlidingTextLayer* layer, AnimationCu
  * @param layer Pointer to the SlidingTextLayer.
  * @param font Font to use when rendering the text.
  */
-void sliding_text_layer_set_font(SlidingTextLayer* layer, GFont* font);
+void sliding_text_layer_set_font(SlidingTextLayer* layer, GFont font);
 
 /**
  * Set the color of the text.
