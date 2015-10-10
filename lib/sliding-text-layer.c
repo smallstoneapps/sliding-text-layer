@@ -271,10 +271,10 @@ static void render(Layer* layer, GContext* ctx) {
   SlidingTextLayerData* data = get_data(layer);
   graphics_context_set_text_color(ctx, data->color_text);
 
-  #if STL_DEBUG
+#if STL_DEBUG
   graphics_context_set_fill_color(ctx, GColorBlack);
   graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
-  #endif
+#endif
 
   if (data->is_animating) {
     graphics_draw_text(ctx,
@@ -304,6 +304,9 @@ static void render(Layer* layer, GContext* ctx) {
 }
 
 static void animation_started(Animation *anim, void *context) {
+#if STL_DEBUG
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", heap_bytes_free());
+#endif
   SlidingTextLayerData* data = get_data((SlidingTextLayer*)context);
   data->is_animating = true;
 }
@@ -313,6 +316,9 @@ static void animation_stopped(Animation *anim, bool stopped, void *context) {
   data->is_animating = false;
   data->text_current = data->text_next;
   data->text_next = false;
+#ifdef PBL_SDK_2
+  animation_destroy(anim);
+#endif
 }
 
 static void animation_stopped_bounce(Animation *anim, bool stopped, void *context) {
@@ -324,12 +330,12 @@ static void update(Animation* anim, AnimationProgress dist_normalized) {
   SlidingTextLayer* layer = (SlidingTextLayer*)animation_get_context(anim);
   SlidingTextLayerData* data = get_data(layer);
 
-  float percent = (float)dist_normalized / (float)ANIMATION_NORMALIZED_MAX;
+  uint16_t percent = (100 * dist_normalized) / (ANIMATION_NORMALIZED_MAX);
   if (data->direction == ANIMATION_DIRECTION_UP) {
-    data->offset = layer_get_height(layer) - (uint16_t)((float)layer_get_height(layer) * percent);
+    data->offset = layer_get_height(layer) - ((uint16_t)(layer_get_height(layer) * percent) / 100);
   }
   else {
-    data->offset = (uint16_t)((float)layer_get_height(layer) * percent);
+    data->offset = (uint16_t)((layer_get_height(layer) * percent) / 100);
   }
   layer_mark_dirty(get_layer(layer));
 }
@@ -338,14 +344,14 @@ static void update_bounce(Animation* anim, AnimationProgress dist_normalized) {
   SlidingTextLayer* layer = (SlidingTextLayer*)animation_get_context(anim);
   SlidingTextLayerData* data = get_data(layer);
 
-  float max_height = layer_get_height(layer) / 3;
+  uint16_t max_height = (layer_get_height(layer) * 100) / 3;
 
-  float percent = (float)dist_normalized / (float)ANIMATION_NORMALIZED_MAX;
+  uint16_t percent = (dist_normalized * 100) / ANIMATION_NORMALIZED_MAX;
   if (data->direction == ANIMATION_DIRECTION_UP) {
-    data->offset = layer_get_height(layer) - (uint16_t)(max_height * percent);
+    data->offset = (layer_get_height(layer) - (uint16_t)(max_height * percent) / 10000);
   }
   else {
-    data->offset = (uint16_t)(max_height * percent);
+    data->offset = (uint16_t)((max_height * percent) / 10000);
   }
   layer_mark_dirty(get_layer(layer));
 }
