@@ -287,7 +287,7 @@ static void render(Layer* layer, GContext* ctx) {
     graphics_draw_text(ctx,
       data->direction == ANIMATION_DIRECTION_UP ? data->text_current : data->text_next,
       data->font,
-      GRect(0, layer_get_height(layer) + data->adjustment - data->offset, 144, layer_get_height(layer)),
+      GRect(0, layer_get_height(layer) + data->adjustment - data->offset, layer_get_width(layer), layer_get_height(layer)),
       data->overflow,
       data->align,
       NULL);
