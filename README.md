@@ -2,15 +2,24 @@
 
 A Layer for your Pebble apps that lets you vertically scroll a line of text.
 
-![](http://zippy.gfycat.com/TenderSecondhandDromedary.gif)
+![](screenshot.gif)
+
+## Installation
+
+*You must be using Pebble SDK 3.12 or newer to use this library.*
+
+To install the package to your app, use the pebble tool:
+
+```
+pebble package install @smallstoneapps/sliding-text-layer
+```
 
 ## Usage
 
-1. Add sliding-text-layer.h and sliding-text-layer.c to your src folder.
-2. Include sliding-text-layer.h in your code.
+2. Include the header file in your code.
 
     ```
-    #include "sliding-text-layer.h"
+    #include <@smallstoneapps/sliding-text-layer/sliding-text-layer.h>
     ```
 3. Create a new SlidingTextLayer.
 

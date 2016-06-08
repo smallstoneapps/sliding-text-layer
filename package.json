@@ -1,0 +1,38 @@
+{
+  "name": "@smallstoneapps/sliding-text-layer",
+  "author": "Matthew Tole <pebble@matthewtole.com>",
+  "version": "1.0.0",
+  "files": [
+    "dist.zip"
+  ],
+  "keywords": [
+    "pebble-package"
+  ],
+  "dependencies": {},
+  "pebble": {
+    "projectType": "package",
+    "sdkVersion": "3",
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk"
+    ],
+    "resources": {
+      "media": []
+    }
+  },
+  "description": "A Layer for your Pebble apps that lets you vertically scroll a line of text.",
+  "main": "src/c/sliding-text-layer.c",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smallstoneapps/sliding-text-layer.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smallstoneapps/sliding-text-layer/issues"
+  },
+  "homepage": "https://github.com/smallstoneapps/sliding-text-layer#readme"
+}
