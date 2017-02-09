@@ -2,6 +2,12 @@
 
 A Layer for your Pebble apps that lets you vertically scroll a line of text.
 
+![](https://images.unsplash.com/photo-1461724947009-3c626ff3d2bc?dpr=1&auto=format&fit=crop&w=767&h=511&q=80&cs=tinysrgb&crop=)
+
+*As of January 2017, this library is officially abandoned.*
+
+---
+
 ![](screenshot.gif)
 
 ## Installation
